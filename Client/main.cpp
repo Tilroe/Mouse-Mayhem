@@ -21,7 +21,6 @@ int main() {
     int iResult;
     int recvbuflen = DEFAULT_BUFLEN;
 
-
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData); // version 2.2
     if (iResult != 0) {
