@@ -6,6 +6,7 @@
 
 // Standard library headers
 #include <string>
+#include <thread>
 
 // Custom headers
 #include "consts.h"
@@ -26,7 +27,7 @@ Client::~Client() {
 }
 
 void Client::start() {
-	printf("[%s] Started\n", ip_address);
+	printf("[%s] [tid = %d] Started\n", ip_address, std::this_thread::get_id());
 	active = true;
 
 	char recvbuf[DEFAULT_BUFLEN];
@@ -34,17 +35,17 @@ void Client::start() {
 	int bytes_recv, bytes_sent;
 
 	while (active) {
+		memset(recvbuf, 0, DEFAULT_BUFLEN);
 		bytes_recv = recvFrom(recvbuf, recvbuflen);
 
 		// Successful recv
 		if (bytes_recv > 0) {
-			
 			printf("[%s] Received: %s\n", ip_address, recvbuf);
 			bytes_sent = sendTo(recvbuf, bytes_recv); // echo
 
 			// Unsuccessful send
 			if (bytes_sent == SOCKET_ERROR) {
-				printf("[%s] Bad send - disconnecting: %d\n", ip_address, WSAGetLastError());
+				printf("[%s] Failed to send - disconnecting: %d\n", ip_address, WSAGetLastError());
 				disconnect();
 			}
 			else {
@@ -55,7 +56,7 @@ void Client::start() {
 
 		// Graceful shutdown
 		else if (bytes_recv == 0) {
-			printf("[%s] shutdown request\n", ip_address);
+			printf("[%s] Shutdown request\n", ip_address);
 			disconnect();
 		}
 
@@ -65,6 +66,8 @@ void Client::start() {
 			disconnect();
 		}
 	}
+
+	return;
 }
 
 void Client::disconnect() {
@@ -78,9 +81,9 @@ bool Client::isActive() {
 }
 
 int Client::recvFrom(char* buf, int buflen) {
-	return recv(this->socket, buf, buflen, 0);
+	return recv(socket, buf, buflen, 0);
 }
 
 int Client::sendTo(char* buf, int buflen) {
-	return send(this->socket, buf, buflen, 0);
+	return send(socket, buf, buflen, 0);
 }

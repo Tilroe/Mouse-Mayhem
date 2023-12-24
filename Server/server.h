@@ -23,12 +23,12 @@ private:
 	SOCKET ListenSocket;
 	char ip_address[16]{""};
 
-	std::vector<Client> clients;
+	std::vector<Client*> clients;
 	std::mutex client_list_lock;
 	bool running;
 
-	void initSocket();
+	int initSocket();
 	void listenForClients();
 	void releaseClients();
-	void addClient(Client& client);
+	void addClient(Client *client);
 };
