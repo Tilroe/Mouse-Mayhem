@@ -1,4 +1,4 @@
-#include "client.h"
+#include "clientConnection.h"
 
 // Windows headers
 #include <winsock2.h>
@@ -14,19 +14,19 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-Client::Client(SOCKET socket) {
+ClientConnection::ClientConnection(SOCKET socket) {
 	this->socket = socket;
 	active = false;
 	socketToIPv4(this->socket, ip_address);
 	printf("[%s] Created\n", ip_address);
 }
 
-Client::~Client() {
+ClientConnection::~ClientConnection() {
 	active = false;
 	closesocket(socket);
 }
 
-void Client::start() {
+void ClientConnection::start() {
 	printf("[%s] [tid = %d] Started\n", ip_address, std::this_thread::get_id());
 	active = true;
 
@@ -70,20 +70,20 @@ void Client::start() {
 	return;
 }
 
-void Client::disconnect() {
+void ClientConnection::disconnect() {
 	active = false;
 	shutdown(socket, SD_SEND);
 	printf("[%s] Shutdown\n", ip_address);
 }
 
-bool Client::isActive() {
+bool ClientConnection::isActive() {
 	return active;
 }
 
-int Client::recvFrom(char* buf, int buflen) {
+int ClientConnection::recvFrom(char* buf, int buflen) {
 	return recv(socket, buf, buflen, 0);
 }
 
-int Client::sendTo(char* buf, int buflen) {
+int ClientConnection::sendTo(char* buf, int buflen) {
 	return send(socket, buf, buflen, 0);
 }
