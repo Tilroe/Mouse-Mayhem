@@ -11,10 +11,10 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-class Client {
+class ClientConnection {
 	public:
-		Client(SOCKET socket);
-		~Client();
+		ClientConnection(SOCKET socket);
+		~ClientConnection();
 		void start();
 		void disconnect();
 		bool isActive();

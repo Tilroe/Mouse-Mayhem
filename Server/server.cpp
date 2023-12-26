@@ -11,7 +11,7 @@
 
 // Custom headers
 #include "consts.h"
-#include "client.h"
+#include "clientConnection.h"
 #include "helper.h"
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -120,10 +120,10 @@ void Server::listenForClients() {
         printf("[Server] Connected to: %s\n", ip_buf);
 
         // Create new client
-        Client *client = new Client(ClientSocket);
+        ClientConnection *client = new ClientConnection(ClientSocket);
 
         // Start thread for client
-        std::thread client_th(&Client::start, client);
+        std::thread client_th(&ClientConnection::start, client);
         client_th.detach();
 
         // Wait till client is running before adding it to list
@@ -163,7 +163,7 @@ void Server::releaseClients() {
 	}
 }
 
-void Server::addClient(Client *client) {
+void Server::addClient(ClientConnection *client) {
     std::lock_guard<std::mutex> lock(client_list_lock);
     clients.push_back(client);
 }

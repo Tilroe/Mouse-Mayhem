@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="client.cpp" />
+    <ClCompile Include="clientConnection.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="server.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="client.h" />
+    <ClInclude Include="clientConnection.h" />
     <ClInclude Include="server.h" />
   </ItemGroup>
   <ItemGroup>
