@@ -4,12 +4,11 @@
 #include <winsock2.h>
 
 // Standard library headers
-#include <vector>
-#include <mutex>
 
 // Custom headers
 #include "consts.h"
 #include "clientConnection.h"
+#include "clientPool.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -18,17 +17,14 @@ public:
 	Server();
 	~Server();
 	void start();
+	bool isRunning();
 
 private:
-	SOCKET ListenSocket;
-	char ip_address[16]{""};
-
-	std::vector<ClientConnection*> clients;
-	std::mutex client_list_lock;
-	bool running;
+	SOCKET ListenSocket = INVALID_SOCKET;
+	ClientPool client_pool;
+	char ip_address[16] = "";
+	bool running = false;
 
 	int initSocket();
 	void listenForClients();
-	void releaseClients();
-	void addClient(ClientConnection *client);
 };

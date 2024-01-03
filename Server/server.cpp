@@ -17,8 +17,13 @@
 #pragma comment(lib, "Ws2_32.lib")
 
 Server::Server() {
-	running = false;
-    ListenSocket = INVALID_SOCKET;
+    // Start up winsock
+    WSADATA wsaData;
+    int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (result != 0) {
+        printf("WSAStartup failed with error: %d\n", result);
+        return;
+    }
 }
 
 Server::~Server() {
@@ -26,16 +31,10 @@ Server::~Server() {
 }
 
 void Server::start() {
-	// Start up winsock
-	WSADATA wsaData;
-	int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (result != 0) {
-		printf("WSAStartup failed with error: %d\n", result);
-		return;
-	}
+	
 
     // Initalize listening socket
-    result = initSocket();
+    int result = initSocket();
     if (result != 0) {
         return;
     }
@@ -45,12 +44,12 @@ void Server::start() {
     running = true;
     printf("[Server] Started on %s\n", ip_address);
 	std::thread listen_th(&Server::listenForClients, this);
-	std::thread manage_clients_th(&Server::releaseClients, this);
 
 	// Wait till threads finish
 	listen_th.join();
-	manage_clients_th.join();
 }
+
+bool Server::isRunning() { return running; }
 
 int Server::initSocket() {
     int iResult;
@@ -106,7 +105,7 @@ void Server::listenForClients() {
     char ip_buf[16];
 
     // Continuously accept clients
-    printf("[Server] [tid: %d] Listening for clients... \n", std::this_thread::get_id());
+    printf("[Server] Listening for clients... \n");
 	while (running) {
         SOCKET ClientSocket = INVALID_SOCKET;
 
@@ -119,51 +118,10 @@ void Server::listenForClients() {
         socketToIPv4(ClientSocket, ip_buf);
         printf("[Server] Connected to: %s\n", ip_buf);
 
-        // Create new client
-        ClientConnection *client = new ClientConnection(ClientSocket);
-
-        // Start thread for client
-        std::thread client_th(&ClientConnection::start, client);
-        client_th.detach();
-
-        // Wait till client is running before adding it to list
-        while (!client->isActive());
-        addClient(client);
+        // Add client connection to client pool
+        client_pool.create(ClientSocket);
 	}
 
     // Close listening socket
     closesocket(ListenSocket);
-}
-
-void Server::releaseClients() {
-    printf("[Server] [tid: %d] Cleaning up inactive clients... \n", std::this_thread::get_id());
-
-	while (running) {
-        // Wait 10 seconds
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-
-        // Lock access to clients
-        std::lock_guard<std::mutex> lock(client_list_lock);
-
-        // Erase inactive clients
-        int n_inactive_clients = 0, i = 0;
-        while (i < clients.size()) {
-            if (clients.at(i)->isActive()) {
-                i++;
-            }
-            else {
-                // Free dynamic memory first, then remove from vector
-                delete clients.at(i);
-                clients.erase(clients.begin() + i);
-                n_inactive_clients++;
-            }
-        }
-
-        printf("[Server] Released %i inactive clients\n", n_inactive_clients);
-	}
-}
-
-void Server::addClient(ClientConnection *client) {
-    std::lock_guard<std::mutex> lock(client_list_lock);
-    clients.push_back(client);
 }

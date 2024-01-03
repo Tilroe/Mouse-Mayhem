@@ -24,12 +24,18 @@
     <ClCompile Include="clientConnection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="clientPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="clientConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clientPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

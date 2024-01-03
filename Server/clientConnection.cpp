@@ -14,27 +14,25 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-ClientConnection::ClientConnection(SOCKET socket) {
-	this->socket = socket;
-	active = false;
+ClientConnection::ClientConnection(SOCKET socket) : socket(socket) {
 	socketToIPv4(this->socket, ip_address);
 	printf("[%s] Created\n", ip_address);
 }
 
 ClientConnection::~ClientConnection() {
-	active = false;
+	if (connected) { disconnect(); }
 	closesocket(socket);
 }
 
 void ClientConnection::start() {
-	printf("[%s] [tid = %d] Started\n", ip_address, std::this_thread::get_id());
-	active = true;
+	printf("[%s] Started\n", ip_address);
+	connected = true;
 
 	char recvbuf[DEFAULT_BUFLEN];
 	int recvbuflen = DEFAULT_BUFLEN;
 	int bytes_recv, bytes_sent;
 
-	while (active) {
+	while (connected) {
 		memset(recvbuf, 0, DEFAULT_BUFLEN);
 		bytes_recv = recvFrom(recvbuf, recvbuflen);
 
@@ -71,13 +69,13 @@ void ClientConnection::start() {
 }
 
 void ClientConnection::disconnect() {
-	active = false;
-	shutdown(socket, SD_SEND);
+	connected = false;
+	shutdown(socket, SD_BOTH);
 	printf("[%s] Shutdown\n", ip_address);
 }
 
-bool ClientConnection::isActive() {
-	return active;
+bool ClientConnection::isConnected() {
+	return connected;
 }
 
 int ClientConnection::recvFrom(char* buf, int buflen) {
