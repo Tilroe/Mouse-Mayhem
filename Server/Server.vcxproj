@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="clientConnection.cpp" />
+    <ClCompile Include="clientPool.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="clientConnection.h" />
+    <ClInclude Include="clientPool.h" />
     <ClInclude Include="server.h" />
   </ItemGroup>
   <ItemGroup>

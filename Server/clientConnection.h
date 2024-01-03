@@ -17,14 +17,14 @@ class ClientConnection {
 		~ClientConnection();
 		void start();
 		void disconnect();
-		bool isActive();
+		bool isConnected();
 		int recvFrom(char* buf, int buflen);
 		int sendTo(char* buf, int buflen);
 		
 
 	private:
 		SOCKET socket;
-		char ip_address[16];
+		char ip_address[16] = "";
 		std::string username;
-		bool active;
+		bool connected = false;
 };
