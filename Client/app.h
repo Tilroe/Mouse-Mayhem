@@ -9,6 +9,6 @@ class App {
 		void start();
 
 	private:
-		bool running;
+		bool running = false;
 		ServerConnection server;
 };

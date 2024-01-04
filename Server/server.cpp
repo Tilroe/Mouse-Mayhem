@@ -31,8 +31,6 @@ Server::~Server() {
 }
 
 void Server::start() {
-	
-
     // Initalize listening socket
     int result = initSocket();
     if (result != 0) {
