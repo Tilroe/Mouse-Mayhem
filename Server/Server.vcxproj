@@ -23,11 +23,13 @@
     <ClCompile Include="clientPool.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="server.cpp" />
+    <ClCompile Include="serverCommands.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="clientConnection.h" />
     <ClInclude Include="clientPool.h" />
     <ClInclude Include="server.h" />
+    <ClInclude Include="serverCommands.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

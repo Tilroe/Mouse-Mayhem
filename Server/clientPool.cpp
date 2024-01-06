@@ -35,9 +35,11 @@ ClientPool::~ClientPool() {
 	} 
 }
 
+std::vector<ClientConnection*> ClientPool::getClients() { return clients; }
+
 void ClientPool::create(SOCKET connection) {
     // Create new client connection
-	ClientConnection* client = new ClientConnection(connection);
+	ClientConnection* client = new ClientConnection(connection, this);
 
     // Start thread for client
     std::thread client_th(&ClientConnection::start, client);
