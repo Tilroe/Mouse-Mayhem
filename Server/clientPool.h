@@ -10,7 +10,8 @@
 #include <condition_variable>
 
 // Custom headers
-#include "clientConnection.h"
+// #include "clientConnection.h"
+class ClientConnection; // forward declaration to avoid circular dependency problems
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -19,6 +20,7 @@ public:
 	ClientPool();
 	~ClientPool();
 	void create(SOCKET connection);
+	std::vector<ClientConnection*> getClients();
 
 private:
 	std::vector<ClientConnection*> clients;
